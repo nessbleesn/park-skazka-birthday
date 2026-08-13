@@ -6,13 +6,57 @@ const experienceCards = [...document.querySelectorAll('[data-category]')];
 const packageButtons = [...document.querySelectorAll('[data-select-package]')];
 const selectedLabel = document.querySelector('[data-selected-label]');
 const mailtoButton = document.querySelector('[data-mailto]');
+const scrollProgress = document.querySelector('[data-scroll-progress]');
+const hero = document.querySelector('.hero');
+const heroTicket = document.querySelector('.hero-ticket');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const motionAllowed = !reducedMotion.matches;
 
-const syncHeader = () => {
+if (motionAllowed) {
+  document.documentElement.classList.add('has-motion');
+  requestAnimationFrame(() => document.body.classList.add('is-ready'));
+} else {
+  document.body.classList.add('is-ready');
+}
+
+const syncViewportState = () => {
   header?.classList.toggle('is-scrolled', window.scrollY > 24);
+  if (scrollProgress) {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
+    scrollProgress.style.transform = `scaleX(${progress})`;
+  }
 };
 
-syncHeader();
-window.addEventListener('scroll', syncHeader, { passive: true });
+let scrollFrame = 0;
+const requestViewportSync = () => {
+  if (scrollFrame) return;
+  scrollFrame = requestAnimationFrame(() => {
+    syncViewportState();
+    scrollFrame = 0;
+  });
+};
+
+syncViewportState();
+window.addEventListener('scroll', requestViewportSync, { passive: true });
+window.addEventListener('resize', requestViewportSync, { passive: true });
+
+if (motionAllowed && hero && heroTicket && window.matchMedia('(pointer: fine)').matches) {
+  hero.addEventListener('pointermove', (event) => {
+    const rect = hero.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+    heroTicket.style.setProperty('--ticket-x', `${x * 7}px`);
+    heroTicket.style.setProperty('--ticket-y', `${y * 5}px`);
+    heroTicket.style.setProperty('--ticket-rotate', `${x * 0.7}deg`);
+  });
+
+  hero.addEventListener('pointerleave', () => {
+    heroTicket.style.setProperty('--ticket-x', '0px');
+    heroTicket.style.setProperty('--ticket-y', '0px');
+    heroTicket.style.setProperty('--ticket-rotate', '0deg');
+  });
+}
 
 menuToggle?.addEventListener('click', () => {
   const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
@@ -40,6 +84,13 @@ filterButtons.forEach((button) => {
     experienceCards.forEach((card) => {
       const matches = filter === 'all' || card.dataset.category === filter;
       card.hidden = !matches;
+      card.classList.remove('filter-enter');
+      if (matches && motionAllowed) {
+        requestAnimationFrame(() => {
+          card.classList.add('filter-enter');
+          card.addEventListener('animationend', () => card.classList.remove('filter-enter'), { once: true });
+        });
+      }
     });
   });
 });
@@ -51,7 +102,15 @@ packageButtons.forEach((button) => {
 
     document.querySelectorAll('[data-package]').forEach((item) => {
       item.classList.toggle('is-selected', item === card);
+      item.classList.remove('selection-pop');
     });
+
+    if (card && motionAllowed) {
+      requestAnimationFrame(() => {
+        card.classList.add('selection-pop');
+        card.addEventListener('animationend', () => card.classList.remove('selection-pop'), { once: true });
+      });
+    }
 
     if (selectedLabel) selectedLabel.textContent = packageName;
 
@@ -61,11 +120,11 @@ packageButtons.forEach((button) => {
       mailtoButton.href = `mailto:event@parkskazka.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
 
-    document.querySelector('.final-cta')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.querySelector('.final-cta')?.scrollIntoView({ behavior: motionAllowed ? 'smooth' : 'auto', block: 'center' });
   });
 });
 
-if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if ('IntersectionObserver' in window && motionAllowed) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
@@ -74,8 +133,29 @@ if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-mot
     });
   }, { threshold: 0.14 });
 
-  document.querySelectorAll('.package-card, .experience-card, .venue-photo, .steps-list li').forEach((item) => {
-    item.classList.add('reveal');
-    observer.observe(item);
+  const revealGroups = [
+    ['.intro-grid > *, .promise-strip span, .package-card, .steps-list li', 'reveal-up'],
+    ['.experience-card', 'reveal-clip'],
+    ['.venue-photo, .weather-card', 'reveal-scale'],
+    ['.venue-copy, .accordion details', 'reveal-fade'],
+  ];
+
+  revealGroups.forEach(([selector, effect]) => {
+    document.querySelectorAll(selector).forEach((item, index) => {
+      item.classList.add('reveal', effect);
+      item.style.setProperty('--reveal-delay', `${(index % 4) * 55}ms`);
+      observer.observe(item);
+    });
   });
+
+  const finalCta = document.querySelector('.final-cta');
+  if (finalCta) {
+    const finalObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      finalCta.classList.add('is-active');
+      finalObserver.disconnect();
+    }, { threshold: 0.18 });
+    finalObserver.observe(finalCta);
+  }
+
 }
