@@ -1491,6 +1491,25 @@ h2 {
   font-size: 12px;
 }
 
+.footer-inner .footer-credit {
+  grid-column: 1 / -1;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  text-align: right;
+}
+
+.footer-credit a {
+  color: var(--white);
+  text-decoration-color: var(--pink);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition: color var(--motion-quick) var(--ease-playful);
+}
+
+.footer-credit a:hover {
+  color: var(--yellow);
+}
+
 .reveal {
   opacity: 0;
   transition: opacity 520ms var(--ease-playful), transform 620ms var(--ease-playful), filter 620ms var(--ease-playful), clip-path 620ms var(--ease-playful);
@@ -2118,6 +2137,11 @@ body.is-ready .confetti-b {
   .footer-inner {
     grid-template-columns: 1fr;
     gap: 18px;
+  }
+
+  .footer-inner .footer-credit {
+    padding-top: 18px;
+    text-align: left;
   }
 
   .brand-footer {
