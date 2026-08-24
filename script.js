@@ -7,6 +7,7 @@ const packageButtons = [...document.querySelectorAll('[data-select-package]')];
 const selectedLabel = document.querySelector('[data-selected-label]');
 const scrollProgress = document.querySelector('[data-scroll-progress]');
 const hero = document.querySelector('.hero');
+const heroPhoto = document.querySelector('.hero-photo');
 const heroTicket = document.querySelector('.hero-ticket');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const motionAllowed = !reducedMotion.matches;
@@ -25,6 +26,10 @@ const syncViewportState = () => {
     const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
     scrollProgress.style.transform = `scaleX(${progress})`;
   }
+  if (motionAllowed && hero && heroPhoto && window.innerWidth > 780) {
+    const heroProgress = Math.min(Math.max(window.scrollY / hero.offsetHeight, 0), 1);
+    heroPhoto.style.setProperty('--photo-scroll-y', `${heroProgress * -22}px`);
+  }
 };
 
 let scrollFrame = 0;
@@ -40,19 +45,23 @@ syncViewportState();
 window.addEventListener('scroll', requestViewportSync, { passive: true });
 window.addEventListener('resize', requestViewportSync, { passive: true });
 
-if (motionAllowed && hero && heroTicket && window.matchMedia('(pointer: fine)').matches) {
+if (motionAllowed && hero && heroPhoto && heroTicket && window.matchMedia('(pointer: fine)').matches) {
   hero.addEventListener('pointermove', (event) => {
     const rect = hero.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
     const y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
-    heroTicket.style.setProperty('--ticket-x', `${x * 7}px`);
-    heroTicket.style.setProperty('--ticket-y', `${y * 5}px`);
+    heroPhoto.style.setProperty('--photo-pointer-x', `${x * 6}px`);
+    heroPhoto.style.setProperty('--photo-pointer-y', `${y * 4}px`);
+    heroTicket.style.setProperty('--ticket-pointer-x', `${x * 8}px`);
+    heroTicket.style.setProperty('--ticket-pointer-y', `${y * 6}px`);
     heroTicket.style.setProperty('--ticket-rotate', `${x * 0.7}deg`);
   });
 
   hero.addEventListener('pointerleave', () => {
-    heroTicket.style.setProperty('--ticket-x', '0px');
-    heroTicket.style.setProperty('--ticket-y', '0px');
+    heroPhoto.style.setProperty('--photo-pointer-x', '0px');
+    heroPhoto.style.setProperty('--photo-pointer-y', '0px');
+    heroTicket.style.setProperty('--ticket-pointer-x', '0px');
+    heroTicket.style.setProperty('--ticket-pointer-y', '0px');
     heroTicket.style.setProperty('--ticket-rotate', '0deg');
   });
 }
