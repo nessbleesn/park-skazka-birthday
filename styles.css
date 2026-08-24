@@ -1909,6 +1909,10 @@ body.is-ready .confetti-b {
     padding: 108px 0 100px;
   }
 
+  .hero-copy {
+    max-width: 100%;
+  }
+
   .hero h1 {
     max-width: 620px;
     font-size: clamp(48px, 15vw, 76px);
