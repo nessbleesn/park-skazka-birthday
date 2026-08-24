@@ -351,7 +351,7 @@ h2 {
 }
 
 .hero-photo {
-  background: url("assets/images/hero-park.webp") center / cover no-repeat;
+  background: var(--sky) url("assets/images/hero-carousel-joy.webp") left center / auto 140% no-repeat;
   filter: saturate(1.04) contrast(1.02);
   transform: scale(1);
   transition: transform 1400ms var(--ease-playful), filter 1200ms ease;
@@ -402,8 +402,16 @@ h2 {
   line-height: 0.86;
 }
 
-.hero h1 span {
-  display: inline-block;
+.hero-title-main,
+.hero-title-accent {
+  display: block;
+}
+
+.hero-title-main {
+  color: var(--blue);
+}
+
+.hero-title-accent {
   margin-top: 12px;
   color: var(--pink);
   font-size: 0.55em;
@@ -1773,7 +1781,8 @@ body.is-ready .hero-scroll span {
   }
 
   .hero-photo {
-    background-position: 62% center;
+    background-position: 46% bottom;
+    background-size: auto 135%;
   }
 
   .hero-wash {
@@ -1800,7 +1809,7 @@ body.is-ready .hero-scroll span {
     font-size: clamp(48px, 15vw, 76px);
   }
 
-  .hero h1 span {
+  .hero-title-accent {
     margin-top: 10px;
     font-size: 0.5em;
   }

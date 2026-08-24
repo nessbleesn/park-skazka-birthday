@@ -5,7 +5,6 @@ const filterButtons = [...document.querySelectorAll('[data-filter]')];
 const experienceCards = [...document.querySelectorAll('[data-category]')];
 const packageButtons = [...document.querySelectorAll('[data-select-package]')];
 const selectedLabel = document.querySelector('[data-selected-label]');
-const mailtoButton = document.querySelector('[data-mailto]');
 const scrollProgress = document.querySelector('[data-scroll-progress]');
 const hero = document.querySelector('.hero');
 const heroTicket = document.querySelector('.hero-ticket');
@@ -113,12 +112,6 @@ packageButtons.forEach((button) => {
     }
 
     if (selectedLabel) selectedLabel.textContent = packageName;
-
-    if (mailtoButton) {
-      const subject = 'День рождения в Парке Сказка';
-      const body = `Здравствуйте! Интересует пакет «${packageName}». Подскажите, пожалуйста, свободные даты и итоговую стоимость.`;
-      mailtoButton.href = `mailto:event@parkskazka.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    }
 
     document.querySelector('.final-cta')?.scrollIntoView({ behavior: motionAllowed ? 'smooth' : 'auto', block: 'center' });
   });
