@@ -3,6 +3,9 @@ const menuToggle = document.querySelector('[data-menu-toggle]');
 const nav = document.querySelector('[data-nav]');
 const filterButtons = [...document.querySelectorAll('[data-filter]')];
 const experienceCards = [...document.querySelectorAll('[data-category]')];
+const venueFilterButtons = [...document.querySelectorAll('[data-venue-filter]')];
+const venueCards = [...document.querySelectorAll('[data-venue-card]')];
+const venueCount = document.querySelector('[data-venue-count]');
 const packageButtons = [...document.querySelectorAll('[data-select-package]')];
 const selectedLabel = document.querySelector('[data-selected-label]');
 const scrollProgress = document.querySelector('[data-scroll-progress]');
@@ -103,6 +106,39 @@ filterButtons.forEach((button) => {
   });
 });
 
+venueFilterButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const filter = button.dataset.venueFilter;
+    venueFilterButtons.forEach((item) => {
+      const isActive = item === button;
+      item.classList.toggle('is-active', isActive);
+      item.setAttribute('aria-pressed', String(isActive));
+    });
+
+    let visibleCount = 0;
+    venueCards.forEach((card) => {
+      const matches = filter === 'all' || card.dataset.zone === filter;
+      card.hidden = !matches;
+      card.classList.remove('filter-enter');
+      if (!matches) return;
+      visibleCount += 1;
+      card.classList.add('is-visible');
+      if (motionAllowed) {
+        requestAnimationFrame(() => {
+          card.classList.add('filter-enter');
+          card.addEventListener('animationend', () => card.classList.remove('filter-enter'), { once: true });
+        });
+      }
+    });
+
+    if (venueCount) {
+      venueCount.textContent = filter === 'all'
+        ? 'Показаны все 16 площадок'
+        : `Показано площадок: ${visibleCount}`;
+    }
+  });
+});
+
 packageButtons.forEach((button) => {
   button.addEventListener('click', () => {
     const card = button.closest('[data-package]');
@@ -138,7 +174,7 @@ if ('IntersectionObserver' in window && motionAllowed) {
   const revealGroups = [
     ['.intro-grid > *, .promise-strip span, .package-card, .steps-list li', 'reveal-up'],
     ['.experience-card', 'reveal-clip'],
-    ['.venue-photo, .weather-card', 'reveal-scale'],
+    ['.venue-photo, .venue-card, .weather-card', 'reveal-scale'],
     ['.venue-copy, .accordion details', 'reveal-fade'],
   ];
 
