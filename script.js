@@ -6,12 +6,14 @@ const experienceCards = [...document.querySelectorAll('[data-category]')];
 const venueFilterButtons = [...document.querySelectorAll('[data-venue-filter]')];
 const venueCards = [...document.querySelectorAll('[data-venue-card]')];
 const venueCount = document.querySelector('[data-venue-count]');
+const programNavLinks = [...document.querySelectorAll('.program-nav a')];
+const programChapters = [...document.querySelectorAll('.program-chapter')];
+const offerRails = [...document.querySelectorAll('[data-offer-rail]')];
 const packageButtons = [...document.querySelectorAll('[data-select-package]')];
 const selectedLabel = document.querySelector('[data-selected-label]');
-const scrollProgress = document.querySelector('[data-scroll-progress]');
 const hero = document.querySelector('.hero');
 const heroPhoto = document.querySelector('.hero-photo');
-const heroTicket = document.querySelector('.hero-ticket');
+const headerSentinel = document.querySelector('[data-header-sentinel]');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const motionAllowed = !reducedMotion.matches;
 
@@ -22,50 +24,25 @@ if (motionAllowed) {
   document.body.classList.add('is-ready');
 }
 
-const syncViewportState = () => {
-  header?.classList.toggle('is-scrolled', window.scrollY > 24);
-  if (scrollProgress) {
-    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
-    scrollProgress.style.transform = `scaleX(${progress})`;
-  }
-  if (motionAllowed && hero && heroPhoto && window.innerWidth > 780) {
-    const heroProgress = Math.min(Math.max(window.scrollY / hero.offsetHeight, 0), 1);
-    heroPhoto.style.setProperty('--photo-scroll-y', `${heroProgress * -22}px`);
-  }
-};
-
-let scrollFrame = 0;
-const requestViewportSync = () => {
-  if (scrollFrame) return;
-  scrollFrame = requestAnimationFrame(() => {
-    syncViewportState();
-    scrollFrame = 0;
+if (header && headerSentinel && 'IntersectionObserver' in window) {
+  const headerObserver = new IntersectionObserver(([entry]) => {
+    header.classList.toggle('is-scrolled', !entry.isIntersecting);
   });
-};
+  headerObserver.observe(headerSentinel);
+}
 
-syncViewportState();
-window.addEventListener('scroll', requestViewportSync, { passive: true });
-window.addEventListener('resize', requestViewportSync, { passive: true });
-
-if (motionAllowed && hero && heroPhoto && heroTicket && window.matchMedia('(pointer: fine)').matches) {
+if (motionAllowed && hero && heroPhoto && window.matchMedia('(pointer: fine)').matches) {
   hero.addEventListener('pointermove', (event) => {
     const rect = hero.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
     const y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
     heroPhoto.style.setProperty('--photo-pointer-x', `${x * 6}px`);
     heroPhoto.style.setProperty('--photo-pointer-y', `${y * 4}px`);
-    heroTicket.style.setProperty('--ticket-pointer-x', `${x * 8}px`);
-    heroTicket.style.setProperty('--ticket-pointer-y', `${y * 6}px`);
-    heroTicket.style.setProperty('--ticket-rotate', `${x * 0.7}deg`);
   });
 
   hero.addEventListener('pointerleave', () => {
     heroPhoto.style.setProperty('--photo-pointer-x', '0px');
     heroPhoto.style.setProperty('--photo-pointer-y', '0px');
-    heroTicket.style.setProperty('--ticket-pointer-x', '0px');
-    heroTicket.style.setProperty('--ticket-pointer-y', '0px');
-    heroTicket.style.setProperty('--ticket-rotate', '0deg');
   });
 }
 
@@ -105,6 +82,44 @@ filterButtons.forEach((button) => {
     });
   });
 });
+
+document.querySelectorAll('.rail-controls').forEach((controls) => {
+  const chapter = controls.closest('.program-chapter');
+  const rail = chapter?.querySelector('[data-offer-rail]');
+  if (!rail) return;
+
+  controls.addEventListener('click', (event) => {
+    const previous = event.target.closest('[data-rail-prev]');
+    const next = event.target.closest('[data-rail-next]');
+    if (!previous && !next) return;
+    rail.scrollBy({
+      left: (previous ? -1 : 1) * Math.max(280, rail.clientWidth * 0.76),
+      behavior: motionAllowed ? 'smooth' : 'auto',
+    });
+  });
+});
+
+programNavLinks.forEach((link) => {
+  link.addEventListener('click', () => {
+    programNavLinks.forEach((item) => item.classList.toggle('is-active', item === link));
+  });
+});
+
+if ('IntersectionObserver' in window && programChapters.length) {
+  const programObserver = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) return;
+    programNavLinks.forEach((link) => {
+      const isActive = link.getAttribute('href') === `#${visible.target.id}`;
+      link.classList.toggle('is-active', isActive);
+      if (isActive) link.scrollIntoView({ behavior: motionAllowed ? 'smooth' : 'auto', block: 'nearest', inline: 'center' });
+    });
+  }, { rootMargin: '-24% 0px -56% 0px', threshold: [0.01, 0.2, 0.45] });
+
+  programChapters.forEach((chapter) => programObserver.observe(chapter));
+}
 
 venueFilterButtons.forEach((button) => {
   button.addEventListener('click', () => {
@@ -173,7 +188,7 @@ if ('IntersectionObserver' in window && motionAllowed) {
 
   const revealGroups = [
     ['.intro-grid > *, .promise-strip span, .package-card, .steps-list li', 'reveal-up'],
-    ['.experience-card', 'reveal-clip'],
+    ['.program-chapter', 'reveal-clip'],
     ['.venue-photo, .venue-card, .weather-card', 'reveal-scale'],
     ['.venue-copy, .accordion details', 'reveal-fade'],
   ];
