@@ -14,6 +14,7 @@ const selectedLabel = document.querySelector('[data-selected-label]');
 const hero = document.querySelector('.hero');
 const heroPhoto = document.querySelector('.hero-photo');
 const headerSentinel = document.querySelector('[data-header-sentinel]');
+const venueTotal = document.querySelector('[data-venue-total]');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const motionAllowed = !reducedMotion.matches;
 
@@ -44,6 +45,38 @@ if (motionAllowed && hero && heroPhoto && window.matchMedia('(pointer: fine)').m
     heroPhoto.style.setProperty('--photo-pointer-x', '0px');
     heroPhoto.style.setProperty('--photo-pointer-y', '0px');
   });
+}
+
+if (venueTotal && motionAllowed && 'IntersectionObserver' in window) {
+  const target = Number(venueTotal.dataset.venueTotal) || 16;
+  venueTotal.textContent = '0';
+
+  const venueTotalObserver = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    venueTotalObserver.disconnect();
+    venueTotal.classList.add('is-counting');
+
+    const duration = 1050;
+    const startedAt = performance.now();
+    const tick = (now) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      venueTotal.textContent = String(Math.round(target * eased));
+
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+        return;
+      }
+
+      venueTotal.textContent = String(target);
+      venueTotal.classList.remove('is-counting');
+      venueTotal.classList.add('is-count-complete');
+    };
+
+    requestAnimationFrame(tick);
+  }, { threshold: 0.6 });
+
+  venueTotalObserver.observe(venueTotal);
 }
 
 menuToggle?.addEventListener('click', () => {
