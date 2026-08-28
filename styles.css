@@ -4355,14 +4355,14 @@ body {
 
 body.is-ready .header-phone::before,
 body.is-ready .header-phone::after {
-  animation: phone-border-orbit 1.35s linear 3;
+  animation: phone-border-orbit 2.4s linear infinite;
 }
 
 .header-phone:hover::before,
 .header-phone:hover::after,
 .header-phone:focus-visible::before,
 .header-phone:focus-visible::after {
-  animation: phone-border-orbit 1.35s linear infinite;
+  animation: phone-border-orbit 2.4s linear infinite;
 }
 
 @keyframes phone-border-orbit {
