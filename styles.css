@@ -3592,6 +3592,7 @@ body.is-ready .confetti-b {
 .chapter-cake { --chapter-color: #f07ea8; --chapter-deep: #b7346a; }
 .chapter-photo { --chapter-color: #886ce3; --chapter-deep: #553aa7; }
 .chapter-red { --chapter-color: #e4263e; --chapter-deep: #a90e28; }
+.chapter-team { --chapter-color: #6c63d9; --chapter-deep: #264184; }
 
 .program-chapter-hero {
   position: relative;
@@ -3692,6 +3693,11 @@ body.is-ready .confetti-b {
   letter-spacing: -0.055em;
 }
 
+#workshops h3 {
+  font-size: clamp(36px, 3.2vw, 46px);
+  letter-spacing: -0.055em;
+}
+
 .program-chapter-copy > p:not(.program-chapter-label) {
   max-width: 560px;
   margin-bottom: 18px;
@@ -3738,6 +3744,82 @@ body.is-ready .confetti-b {
 
 .program-chapter-hero-reverse:hover img {
   transform: rotate(0) scale(1.025);
+}
+
+.program-team-visual {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(100%, 310px);
+  min-height: 260px;
+  justify-self: end;
+  align-content: center;
+  padding: 34px 24px;
+  overflow: hidden;
+  border: 8px solid rgba(255, 255, 255, 0.9);
+  border-radius: 42% 58% 46% 54% / 50% 44% 56% 50%;
+  color: var(--white);
+  background:
+    radial-gradient(circle at 72% 22%, rgba(255, 215, 59, 0.95) 0 9%, transparent 9.5%),
+    linear-gradient(145deg, #132d6d, #ef0a7d 132%);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.24);
+  transform: rotate(3deg);
+}
+
+.program-team-visual::before {
+  position: absolute;
+  width: 128px;
+  height: 128px;
+  right: -42px;
+  bottom: -35px;
+  border: 22px solid rgba(255, 255, 255, 0.13);
+  border-radius: 50%;
+  content: "";
+}
+
+.program-team-word {
+  position: relative;
+  z-index: 1;
+  font-family: var(--display);
+  font-size: clamp(34px, 3.4vw, 50px);
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.program-team-word-bottom {
+  color: var(--yellow);
+  transform: translateX(18px);
+}
+
+.program-team-spark {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+  color: var(--yellow);
+  font-size: 31px;
+  animation: program-team-spark 7s linear infinite;
+}
+
+.program-team-sticker {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  padding: 8px 11px;
+  border-radius: 12px;
+  color: var(--blue);
+  background: var(--white);
+  font-family: var(--utility);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+  transform: rotate(-5deg);
+}
+
+@keyframes program-team-spark {
+  to { transform: rotate(360deg); }
 }
 
 .program-rail-head {
@@ -3969,13 +4051,55 @@ body.is-ready .confetti-b {
   background: var(--blue);
   font-weight: 700;
   text-decoration: none;
-  white-space: nowrap;
+  line-height: 1.2;
+  text-align: center;
   transition: transform var(--motion-quick) var(--ease-playful), background var(--motion-quick) ease;
 }
 
 .program-link:hover {
   background: var(--pink);
   transform: translateY(-2px);
+}
+
+.program-team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 28px 30px 0;
+}
+
+.program-team-grid .offer-card {
+  min-height: 230px;
+}
+
+.program-team-grid .offer-card h4 {
+  max-width: none;
+  font-size: 30px;
+}
+
+.program-team-catalog {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  margin: 18px 30px 32px;
+  padding: 22px 24px;
+  border: 1px solid color-mix(in srgb, var(--chapter-color) 28%, white);
+  border-radius: 24px;
+  background: linear-gradient(115deg, rgba(108, 99, 217, 0.1), rgba(255, 201, 47, 0.14));
+}
+
+.program-team-catalog .offer-badge {
+  margin-bottom: 6px;
+}
+
+.program-team-catalog p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.program-team-catalog .program-link {
+  max-width: 390px;
 }
 
 @media (max-width: 1040px) {
@@ -3996,6 +4120,10 @@ body.is-ready .confetti-b {
 
   #extras h3 {
     font-size: clamp(29px, 3.4vw, 34px);
+  }
+
+  #workshops h3 {
+    font-size: clamp(30px, 3.5vw, 38px);
   }
 
   .offer-rail {
@@ -4079,6 +4207,10 @@ body.is-ready .confetti-b {
     font-size: clamp(31px, 8vw, 34px);
   }
 
+  #workshops h3 {
+    font-size: clamp(30px, 9vw, 40px);
+  }
+
   .program-chapter-copy > p:not(.program-chapter-label) {
     margin-bottom: 15px;
     font-size: 14px;
@@ -4099,6 +4231,19 @@ body.is-ready .confetti-b {
   .program-chapter-hero-reverse:hover img {
     border-radius: 28px 42% 28px 38%;
     transform: none;
+  }
+
+  .program-team-visual {
+    width: 100%;
+    min-height: 220px;
+    justify-self: stretch;
+    border-width: 6px;
+    border-radius: 28px 42% 28px 38%;
+    transform: none;
+  }
+
+  .program-team-word {
+    font-size: clamp(34px, 12vw, 48px);
   }
 
   .program-rail-head {
@@ -4136,6 +4281,27 @@ body.is-ready .confetti-b {
     padding: 21px;
   }
 
+  .program-team-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 20px 18px 0;
+  }
+
+  .program-team-grid .offer-card {
+    min-height: 205px;
+  }
+
+  .program-team-grid .offer-card h4 {
+    font-size: 25px;
+  }
+
+  .program-team-catalog {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin: 14px 18px 25px;
+    padding: 21px;
+  }
+
   .program-single-card .offer-price {
     margin-top: 0;
   }
@@ -4160,6 +4326,14 @@ body.is-ready .confetti-b {
     font-size: 42px;
   }
 
+  #workshops h3 {
+    font-size: 31px;
+  }
+
+  .program-team-word {
+    font-size: 34px;
+  }
+
   .program-count {
     font-size: 12px;
   }
@@ -4179,9 +4353,11 @@ body.is-ready .confetti-b {
 
   .program-nav a,
   .program-chapter-hero img,
+  .program-team-spark,
   .offer-card,
   .program-link,
   .rail-controls button {
+    animation: none !important;
     transition: none !important;
     transform: none !important;
   }
