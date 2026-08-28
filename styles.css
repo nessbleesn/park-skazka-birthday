@@ -3683,6 +3683,15 @@ body.is-ready .confetti-b {
   line-height: 0.9;
 }
 
+.program-heading-stacked span {
+  display: block;
+}
+
+#extras h3 {
+  font-size: clamp(40px, 3.2vw, 46px);
+  letter-spacing: -0.055em;
+}
+
 .program-chapter-copy > p:not(.program-chapter-label) {
   max-width: 560px;
   margin-bottom: 18px;
@@ -3985,6 +3994,10 @@ body.is-ready .confetti-b {
     font-size: clamp(42px, 6vw, 58px);
   }
 
+  #extras h3 {
+    font-size: clamp(29px, 3.4vw, 34px);
+  }
+
   .offer-rail {
     grid-auto-columns: minmax(238px, 34%);
   }
@@ -4063,8 +4076,7 @@ body.is-ready .confetti-b {
   }
 
   #extras h3 {
-    font-size: clamp(28px, 7.4vw, 34px);
-    letter-spacing: -0.055em;
+    font-size: clamp(31px, 8vw, 34px);
   }
 
   .program-chapter-copy > p:not(.program-chapter-label) {
